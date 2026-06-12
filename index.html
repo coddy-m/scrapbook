@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celebrating You ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <script src="protect.js"></script>
+    <style>
+        :root {
+            --blush-pink: #f8c8dc;
+            --warm-cream: #fdfbf7;
+            --lavender: #e6e6fa;
+            --soft-gold: #d4af37;
+            --champagne: #f7e7ce;
+            --beige: #f5f5dc;
+            --text-dark: #4a4a4a;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--warm-cream);
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(248, 200, 220, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(230, 230, 250, 0.3) 0%, transparent 50%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* PASSWORD PROTECTION SCREEN */
+        #password-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--warm-cream), var(--blush-pink));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+        #password-screen.hidden { display: none; }
+        .password-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+        .password-box h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--soft-gold);
+            margin-bottom: 1rem;
+        }
+        .password-box input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: 2px solid var(--champagne);
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .password-box button {
+            padding: 1rem 2rem;
+            background: var(--soft-gold);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .password-box button:hover { background: #b8962e; }
+        .password-error {
+            color: #d32f2f;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--warm-cream), var(--blush-pink));
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        #loading-screen.visible { display: flex; }
+        #loading-screen.hidden { opacity: 0; visibility: hidden; }
+        
+        .loading-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--soft-gold);
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        .loading-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--soft-gold);
+            opacity: 0.6;
+            animation: float-particle 5s infinite ease-in-out;
+        }
+        .butterfly {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: fly 8s infinite linear;
+            opacity: 0.7;
+        }
+
+        /* Main Scrapbook Container */
+        #scrapbook {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: none;
+        }
+        #scrapbook.visible { display: block; animation: fadeIn 1s ease; }
+
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .section.visible { opacity: 1; transform: translateY(0); }
+
+        .section-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--soft-gold);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #888;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        /* Photo & Video Grid */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .media-card {
+            background: white;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .media-card:nth-child(even) { transform: rotate(1deg); }
+        .media-card:hover {
+            transform: rotate(0deg) scale(1.03);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .media-card img, .media-card video {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            border-radius: 3px;
+        }
+        .media-caption {
+            font-family: 'Dancing Script', cursive;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+        }
+        .video-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            pointer-events: none;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: var(--soft-gold);
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            padding: 2rem;
+            position: relative;
+            width: 50%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .timeline-item.visible { opacity: 1; }
+        .timeline-item:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-item:nth-child(even) { left: 50%; }
+        .timeline-item::after {
+            content: '✨';
+            position: absolute;
+            top: 2rem;
+            width: 20px; height: 20px;
+            background: var(--soft-gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+        }
+        .timeline-item:nth-child(odd)::after { right: -10px; }
+        .timeline-item:nth-child(even)::after { left: -10px; }
+
+        /* Memory Constellation */
+        #constellation-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: radial-gradient(circle, rgba(230,230,250,0.5) 0%, transparent 70%);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            width: 15px; height: 15px;
+            background: var(--soft-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--soft-gold);
+            animation: twinkle 2s infinite alternate;
+            transition: transform 0.3s ease;
+        }
+        .star:hover { transform: scale(1.5); }
+
+        /* Hidden Letters */
+        .envelope {
+            width: 100px; height: 70px;
+            background: var(--champagne);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 1rem;
+            display: inline-block;
+        }
+        .envelope:hover { transform: translateY(-10px); }
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-top: 35px solid var(--blush-pink);
+        }
+        .letter-content {
+            display: none;
+            position: absolute;
+            top: 100%; left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            width: 250px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+            z-index: 20;
+            border-radius: 5px;
+        }
+        .envelope.open .letter-content { display: block; animation: fadeIn 0.5s ease; }
+
+        /* Memory Wheel */
+        #memory-wheel-container {
+            text-align: center;
+        }
+        #wheel {
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: conic-gradient(var(--blush-pink), var(--lavender), var(--champagne), var(--blush-pink));
+            margin: 2rem auto;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+        #wheel::after {
+            content: 'Discover!';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #spin-btn {
+            padding: 1rem 2rem;
+            background: var(--soft-gold);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        #spin-btn:hover { background: #b8962e; }
+        #wheel-result {
+            margin-top: 2rem;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            min-height: 3rem;
+        }
+
+        /* Final Scene */
+        #final-scene {
+            background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .lantern {
+            position: absolute;
+            width: 30px; height: 40px;
+            background: radial-gradient(circle, #ffeb3b, #ff9800);
+            border-radius: 5px 5px 15px 15px;
+            opacity: 0.8;
+            animation: rise 10s infinite linear;
+        }
+        .final-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            z-index: 10;
+            position: relative;
+        }
+        .closing-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--soft-gold);
+            opacity: 0;
+            animation: fadeIn 2s ease 3s forwards;
+        }
+
+        /* Modal */
+        #media-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #media-modal.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: var(--warm-cream);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 700px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
+            animation: zoomIn 0.5s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content img, .modal-content video {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            z-index: 10;
+        }
+
+        /* From Me Section */
+        .from-me-container {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            max-width: 800px;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .my-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--soft-gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+        .from-me-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        .from-me-text p {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.4rem;
+            line-height: 2;
+            color: var(--text-dark);
+        }
+
+        /* Hobby Cards */
+        .hobby-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            max-width: 300px;
+            transition: transform 0.3s ease;
+            margin: 1rem;
+        }
+        .hobby-card:hover { transform: translateY(-10px); }
+        .hobby-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hobby-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--soft-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Video Section Special Styling */
+        .video-section .media-card {
+            background: linear-gradient(135deg, #fff 0%, var(--lavender) 100%);
+        }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes float-particle { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -20px); } }
+        @keyframes fly { 0% { transform: translate(-100px, 100vh) rotate(0deg); } 100% { transform: translate(100vw, -100px) rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes twinkle { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.2); } }
+        @keyframes rise { 0% { transform: translateY(100vh) scale(0.5); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
+
+        /* Sparkles */
+        .sparkle {
+            position: absolute;
+            width: 5px; height: 5px;
+            background: var(--soft-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        /* File Upload Section */
+        .upload-hint {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+            max-width: 800px;
+        }
+        .upload-hint h3 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--soft-gold);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .upload-hint code {
+            background: var(--lavender);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PASSWORD PROTECTION -->
+    <div id="password-screen">
+        <div class="password-box">
+            <h2>✨ Private Collection ✨</h2>
+            <p style="margin-bottom: 1rem; font-style: italic;">Enter password to view</p>
+            <input type="password" id="password-input" placeholder="Enter password..." onkeypress="if(event.key==='Enter')checkPassword()">
+            <button onclick="checkPassword()">Enter</button>
+            <p class="password-error" id="password-error">Incorrect password. Please try again.</p>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <h1 class="loading-title">Celebrating You ✨</h1>
+        <p class="loading-subtitle">A collection of beautiful moments that showcase the incredible person you are — your journey, your passions, and all the things that make you uniquely you.</p>
+    </div>
+
+    <!-- Main Scrapbook -->
+    <div id="scrapbook">
+        
+        <!-- Section 1: Her Journey -->
+        <section class="section" id="journey">
+            <h2 class="section-title">🌟 Your Journey</h2>
+            <p class="section-subtitle">The milestones and moments that shaped who you are</p>
+            <div class="timeline" id="timeline">
+                <!-- Timeline items generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 2: Her Passions & Hobbies -->
+        <section class="section" id="passions">
+            <h2 class="section-title">💫 What Lights You Up</h2>
+            <p class="section-subtitle">The activities and passions that bring you joy</p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center;" id="hobbies-container">
+                <!-- Hobby cards generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 3: Beautiful Moments (PHOTOS) -->
+        <section class="section" id="moments">
+            <h2 class="section-title">📸 Beautiful Moments</h2>
+            <p class="section-subtitle">Candid snapshots of you being wonderfully you</p>
+            <div class="media-grid" id="moments-grid">
+                <!-- Photos generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 4: Video Memories (HER VIDEOS) -->
+        <section class="section video-section" id="videos">
+            <h2 class="section-title">🎬 Your Video Memories</h2>
+            <p class="section-subtitle">Moving moments that capture your spirit</p>
+            <div class="media-grid" id="videos-grid">
+                <!-- Videos generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 5: Adventures & Dreams -->
+        <section class="section" id="adventures">
+            <h2 class="section-title">🌍 Adventures & Dreams</h2>
+            <p class="section-subtitle">Places you've been and dreams you're chasing</p>
+            <div class="media-grid" id="adventures-grid">
+                <!-- Photos/Videos generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 6: What You Cherish -->
+        <section class="section" id="cherish">
+            <h2 class="section-title">💛 What You Cherish</h2>
+            <p class="section-subtitle">The things that matter most to you</p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+                <!-- Envelopes generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 7: Qualities That Make You Special -->
+        <section class="section" id="qualities">
+            <h2 class="section-title">✨ What Makes You Special</h2>
+            <p class="section-subtitle">The beautiful qualities that define you</p>
+            <div class="media-grid" id="qualities-grid">
+                <!-- Photos generated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 8: A Note From Me (WITH MY PHOTO) -->
+        <section class="section" id="from-me">
+            <h2 class="section-title">💌 From Your Friend</h2>
+            <div class="from-me-container">
+                <!-- YOUR PHOTO HERE - Use local path or base64 -->
+                <img src="images/photo13.jpeg" alt="Your Friend" class="photo13" id="photo13" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f7e7ce%22 width=%22200%22 height=%22200%22/%3E%3Ctext fill=%22%23d4af37%22 font-family=%22sans-serif%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>Add Your Photo%3C/text%3E%3C/svg%3E'">
+                <div class="from-me-text">
+                    <p style="font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: var(--soft-gold); margin-bottom: 1rem;">
+                        A Little Note From Me...
+                    </p>
+                    <p>
+                        "I created this because you deserve to see yourself the way others see you — 
+                        extraordinary. Watching you navigate life with such grace, passion, and authenticity 
+                        inspires me more than you know. Thank you for being you, and for letting me witness 
+                        your beautiful journey. I'm so grateful to be part of your story, even if just as 
+                        a small chapter."
+                    </p>
+                    <p style="margin-top: 1.5rem; font-family: 'Dancing Script', cursive; font-size: 1.6rem; color: var(--soft-gold);">
+                        With love and admiration 💛
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Memory Constellation -->
+        <section class="section" id="constellation">
+            <h2 class="section-title">🌌 Your Constellation</h2>
+            <p class="section-subtitle">Click on a star to reveal a special moment from your life</p>
+            <div id="constellation-container">
+                <!-- Stars generated by JS -->
+            </div>
+        </section>
+
+        <!-- Memory Wheel -->
+        <section class="section" id="wheel-section">
+            <h2 class="section-title">🎡 Discover Your Magic</h2>
+            <p class="section-subtitle">Spin to reveal something wonderful about you</p>
+            <div id="memory-wheel-container">
+                <div id="wheel"></div>
+                <button id="spin-btn">Spin the Wheel</button>
+                <div id="wheel-result"></div>
+            </div>
+        </section>
+
+        <!-- Final Scene -->
+        <section class="section" id="final-scene">
+            <div class="final-message">
+                "You are a rare and beautiful soul. Your journey is just beginning, and I have no doubt 
+                you'll continue to light up every space you enter. Keep chasing your dreams, keep being 
+                unapologetically you, and keep shining your light on this world. The world is better 
+                because you're in it. ✨"
+            </div>
+            <div class="closing-text">Here's to Your Beautiful Journey...</div>
+        </section>
+
+    <script>
+        // PASSWORD PROTECTION - Change this to your desired password
+        const CORRECT_PASSWORD = "NdutaSteph"; // CHANGE THIS!
+
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            if (input === CORRECT_PASSWORD) {
+                document.getElementById('password-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.add('visible');
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.remove('visible');
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('scrapbook').classList.add('visible');
+                    initScrapbook();
+                }, 4000);
+            } else {
+                document.getElementById('password-error').style.display = 'block';
+                document.getElementById('password-input').value = '';
+            }
+        }
+
+        // --- DATA: Customize these with HER details ---
+        // Use LOCAL PATHS like "images/photo1.jpg" or BASE64 like "data:image/jpeg;base64,..."
+        
+        const herJourney = [
+            { title: 'A Star is Born', date: 'Her Birthday', note: 'The day the world became brighter' },
+            { title: 'First Steps', date: 'Childhood', note: 'Beginning her unique journey' },
+            { title: 'Finding Her Passion', date: 'Teen Years', note: 'Discovering what sets her soul on fire' },
+            { title: 'A Major Achievement', date: 'Recent', note: 'Proof that dreams do come true' },
+            { title: 'New Chapter', date: 'Now', note: 'Embracing what\'s next with courage' }
+        ];
+
+        const herHobbies = [
+            { icon: '🎨', title: 'Creative Expression', desc: 'When she creates, magic happens' },
+            { icon: '📚', title: 'Getting Lost in new discoveries', desc: 'Books are her escape and inspiration' },
+            { icon: '🌸', title: 'Finding Beauty Everywhere', desc: 'She notices what others miss' },
+            { icon: '☕', title: 'Cozy Moments', desc: 'Simple pleasures, perfectly enjoyed' },
+            { icon: '🎵', title: 'Music & Rhythm', desc: 'Her soul dances to its own beat' },
+            { icon: '✈️', title: 'Exploring and nature walks', desc: 'Adventure calls and she answers' },
+            { icon: '🛌', title: 'Self-Care', desc: 'She knows the importance of nurturing herself through sleep😉' },
+            { icon: '🍿', title: 'Movie Nights', desc: 'Cinematic escapes that fuel her imagination' },                   
+            { icon: '👯', title: 'Social Gatherings', desc: 'Connecting with friends and creating memories' }
+        ];
+
+        // EXAMPLES - Replace with your local files or base64:
+        // Local file: src: "images/photo1.jpg"
+        // Base64: src: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+        
+        const beautifulMoments = [
+            { type: 'photo', src: 'images/photo1.jpg', caption: 'That Beautiful Smile', date: '', note: 'Your smile could light up the darkest room' },
+            { type: 'photo', src: 'images/photo2.jpg', caption: 'Lost in Thought', date: '', note: 'Deep thinker, beautiful soul' },
+            { type: 'photo', src: 'images/photo3.jpg', caption: 'Pure Joy', date: '', note: 'Happiness looks gorgeous on you' },
+            { type: 'photo', src: 'images/photo4.jpg', caption: 'Being You', date: '', note: 'Authentic and absolutely perfect' },
+            { type: 'photo', src: 'images/photo5.jpg', caption: 'Golden Hour Glow', date: '', note: 'Even the sun wants to highlight you' }
+        ];
+
+        // HER VIDEOS - Use local paths like "videos/video1.mp4"
+        const herVideos = [
+            { type: 'video', src: 'videos/video1.mp4', poster: 'images/video-thumb1.png', caption: 'A Special Moment', date: '', note: 'Captured forever' },
+            { type: 'video', src: 'videos/video2.mp4', poster: 'images/video-thumb2.png', caption: 'Your Energy', date: '', note: 'Contagious and beautiful' }
+        ];
+
+        const adventures = [
+            { type: 'photo', src: 'images/photo6.jpeg', caption: 'Chasing Sunsets', date: '', note: 'Always reaching for beautiful things' },
+            { type: 'video', src: 'videos/video1.mp4', poster: 'images/video-thumb1.png', caption: 'Adventure Time', date: '', note: 'Living your best life' },
+            { type: 'photo', src: 'images/photo7.jpeg', caption: 'Dream Destinations', date: '', note: 'Collecting moments, not things' },
+            { type: 'photo', src: 'images/photo8.jpeg', caption: 'Wanderlust Soul', date: '', note: 'The world is lucky to be explored by you' }
+        ];
+
+        const whatSheCherishes = [
+            'Family bonds that ground her',
+            'Moments of peace and quiet',
+            'Deep, meaningful conversations',
+            'The people who truly matter',
+            'Her dreams and aspirations',
+            'Simple acts of kindness',
+            'Nature\'s beauty',
+            'Personal growth and learning'
+        ];
+
+        const herQualities = [
+            { type: 'photo', src: 'images/photo9.jpeg', caption: 'Her Kindness', note: 'She cares deeply and loves fiercely' },
+            { type: 'photo', src: 'images/photo10.jpeg', caption: 'Her Strength', note: 'Resilient and brave in everything she does' },
+            { type: 'photo', src: 'images/photo11.jpeg', caption: 'Her Creativity', note: 'She sees the world through artistic eyes' },
+            { type: 'photo', src: 'images/photo12.jpeg', caption: 'Her Authenticity', note: 'Unapologetically and beautifully herself' }
+        ];
+
+        const constellationMoments = [
+            { x: 20, y: 30, caption: 'That Time She Nailed It', note: 'She\'s capable of amazing things' },
+            { x: 50, y: 20, caption: 'A Moment of Peace', note: 'She deserves all the tranquility' },
+            { x: 80, y: 40, caption: 'Pure Happiness', note: 'This is what joy looks like' },
+            { x: 30, y: 70, caption: 'Her Greatest Strength', note: 'She\'s stronger than she knows' },
+            { x: 70, y: 80, caption: 'A Dream Coming True', note: 'More dreams to come' }
+        ];
+
+        const wheelQualities = [
+            "Her infectious laugh",
+            "The way she notices details",
+            "Her creative mind",
+            "Her compassionate heart",
+            "Her determination",
+            "Her unique perspective",
+            "Her ability to inspire others",
+            "Her beautiful soul",
+            "Her courage to be authentic",
+            "Her endless potential"
+        ];
+
+        // --- INITIALIZATION ---
+        function initScrapbook() {
+            renderTimeline();
+            renderHobbies();
+            renderMediaGrid('moments-grid', beautifulMoments);
+            renderMediaGrid('videos-grid', herVideos);
+            renderMediaGrid('adventures-grid', adventures);
+            renderMediaGrid('qualities-grid', herQualities);
+            renderCherishEnvelopes();
+            renderConstellation();
+            renderLanterns();
+            setupIntersectionObserver();
+            setupWheel();
+            createSparkles();
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline');
+            herJourney.forEach((item, i) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                timelineItem.innerHTML = `
+                    <h3 style="font-family: 'Dancing Script', cursive; color: var(--soft-gold); font-size: 1.5rem;">${item.title}</h3>
+                    <p style="font-size: 0.9rem; color: #888; margin: 0.5rem 0;">${item.date}</p>
+                    <p>${item.note}</p>
+                `;
+                container.appendChild(timelineItem);
+            });
+        }
+
+        function renderHobbies() {
+            const container = document.getElementById('hobbies-container');
+            herHobbies.forEach(hobby => {
+                const card = document.createElement('div');
+                card.className = 'hobby-card';
+                card.innerHTML = `
+                    <div class="hobby-icon">${hobby.icon}</div>
+                    <h3 class="hobby-title">${hobby.title}</h3>
+                    <p style="font-style: italic; color: #666;">${hobby.desc}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderMediaGrid(containerId, items) {
+            const container = document.getElementById(containerId);
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'media-card';
+                
+                if (item.type === 'video') {
+                    card.innerHTML = `
+                        <video src="${item.src}" poster="${item.poster}" muted loop></video>
+                        <div class="video-indicator">▶</div>
+                        <div class="media-caption">${item.caption}</div>
+                    `;
+                    // Play video on hover
+                    const video = card.querySelector('video');
+                    card.addEventListener('mouseenter', () => {
+                        video.play().catch(() => {});
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        video.pause();
+                        video.currentTime = 0;
+                    });
+                } else {
+                    card.innerHTML = `
+                        <img src="${item.src}" alt="${item.caption}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22500%22%3E%3Crect fill=%22%23f7e7ce%22 width=%22400%22 height=%22500%22/%3E%3Ctext fill=%22%23d4af37%22 font-family=%22sans-serif%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>Add Photo%3C/text%3E%3C/svg%3E'">
+                        <div class="media-caption">${item.caption}</div>
+                    `;
+                }
+                
+                card.onclick = () => openModal(item);
+                container.appendChild(card);
+            });
+        }
+
+        function renderCherishEnvelopes() {
+            const container = document.querySelector('#cherish div');
+            whatSheCherishes.forEach((item, index) => {
+                const env = document.createElement('div');
+                env.className = 'envelope';
+                env.innerHTML = `<div class="letter-content" style="width: 200px; font-size: 1rem;">${item}</div>`;
+                env.onclick = () => env.classList.toggle('open');
+                container.appendChild(env);
+            });
+        }
+
+        function renderConstellation() {
+            const container = document.getElementById('constellation-container');
+            constellationMoments.forEach(m => {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = m.x + '%';
+                star.style.top = m.y + '%';
+                star.onclick = () => {
+                    alert(`✨ ${m.caption}\n\n${m.note}`);
+                };
+                container.appendChild(star);
+            });
+        }
+
+        function renderLanterns() {
+            const container = document.getElementById('final-scene');
+            for (let i = 0; i < 15; i++) {
+                const l = document.createElement('div');
+                l.className = 'lantern';
+                l.style.left = Math.random() * 100 + '%';
+                l.style.animationDelay = Math.random() * 10 + 's';
+                l.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                container.appendChild(l);
+            }
+        }
+
+        function createSparkles() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => {
+                for (let i = 0; i < 5; i++) {
+                    const s = document.createElement('div');
+                    s.className = 'sparkle';
+                    s.style.left = Math.random() * 100 + '%';
+                    s.style.top = Math.random() * 100 + '%';
+                    s.onclick = () => {
+                        const compliments = [
+                            "You're extraordinary!",
+                            "The world needs more people like you!",
+                            "You inspire others just by being you!",
+                            "Your potential is limitless!",
+                            "You're more amazing than you realize!"
+                        ];
+                        alert("✨ " + compliments[Math.floor(Math.random() * compliments.length)]);
+                    };
+                    sec.appendChild(s);
+                }
+            });
+        }
+
+        function setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        if (entry.target.classList.contains('timeline-item')) {
+                            entry.target.classList.add('visible');
+                        }
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll('.section, .timeline-item').forEach(el => observer.observe(el));
+        }
+
+        function setupWheel() {
+            const wheel = document.getElementById('wheel');
+            const btn = document.getElementById('spin-btn');
+            const result = document.getElementById('wheel-result');
+            let currentRotation = 0;
+
+            btn.onclick = () => {
+                const randomSpin = Math.floor(Math.random() * 360) + 720;
+                currentRotation += randomSpin;
+                wheel.style.transform = `rotate(${currentRotation}deg)`;
+                result.textContent = '';
+                
+                setTimeout(() => {
+                    const randomQuality = wheelQualities[Math.floor(Math.random() * wheelQualities.length)];
+                    result.textContent = `✨ ${randomQuality} ✨`;
+                }, 4000);
+            };
+        }
+
+        // --- MODAL FUNCTIONS ---
+        function openModal(item) {
+            const container = document.getElementById('modal-media-container');
+            container.innerHTML = '';
+            
+            if (item.type === 'video') {
+                const video = document.createElement('video');
+                video.src = item.src;
+                video.controls = true;
+                video.autoplay = true;
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '500px';
+                video.style.borderRadius = '5px';
+                container.appendChild(video);
+            } else {
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = item.caption;
+                container.appendChild(img);
+            }
+            
+            document.getElementById('modal-caption').textContent = item.caption;
+            document.getElementById('modal-date').textContent = item.date || '';
+            document.getElementById('modal-note').textContent = item.note || '';
+            document.getElementById('media-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('media-modal').classList.remove('active');
+            // Pause any playing videos
+            const videos = document.querySelectorAll('#modal-media-container video');
+            videos.forEach(video => {
+                video.pause();
+            });
+        }
+
+        document.getElementById('media-modal').onclick = (e) => {
+            if (e.target.id === 'media-modal') closeModal();
+        };
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
