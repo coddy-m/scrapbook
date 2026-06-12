@@ -451,10 +451,11 @@
             justify-content: center;
         }
         .my-photo {
-            width: 200px;
-            height: 200px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             object-fit: cover;
+            object-position: center;
             border: 5px solid var(--soft-gold);
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
         }
@@ -629,7 +630,7 @@
             <h2 class="section-title">💌 From Your Friend</h2>
             <div class="from-me-container">
                 <!-- YOUR PHOTO HERE - Use local path or base64 -->
-                <img src="images/photo13.jpeg" alt="Your Friend" class="photo13" id="photo13" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f7e7ce%22 width=%22200%22 height=%22200%22/%3E%3Ctext fill=%22%23d4af37%22 font-family=%22sans-serif%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>Add Your Photo%3C/text%3E%3C/svg%3E'">
+   
                 <div class="from-me-text">
                     <p style="font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: var(--soft-gold); margin-bottom: 1rem;">
                         A Little Note From Me...
@@ -728,11 +729,11 @@
         // Base64: src: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
         
         const beautifulMoments = [
-            { type: 'photo', src: 'images/photo1.jpg', caption: 'That Beautiful Smile', date: '', note: 'Your smile could light up the darkest room' },
-            { type: 'photo', src: 'images/photo2.jpg', caption: 'Lost in Thought', date: '', note: 'Deep thinker, beautiful soul' },
-            { type: 'photo', src: 'images/photo3.jpg', caption: 'Pure Joy', date: '', note: 'Happiness looks gorgeous on you' },
-            { type: 'photo', src: 'images/photo4.jpg', caption: 'Being You', date: '', note: 'Authentic and absolutely perfect' },
-            { type: 'photo', src: 'images/photo5.jpg', caption: 'Golden Hour Glow', date: '', note: 'Even the sun wants to highlight you' }
+            { type: 'photo', src: 'images/photo1.jpeg', caption: 'That Beautiful Smile', date: '', note: 'Your smile could light up the darkest room' },
+            { type: 'photo', src: 'images/photo2.jpeg', caption: 'Lost in Thought', date: '', note: 'Deep thinker, beautiful soul' },
+            { type: 'photo', src: 'images/photo3.jpeg', caption: 'Pure Joy', date: '', note: 'Happiness looks gorgeous on you' },
+            { type: 'photo', src: 'images/photo4.jpeg', caption: 'Being You', date: '', note: 'Authentic and absolutely perfect' },
+            { type: 'photo', src: 'images/photo5.jpeg', caption: 'Golden Hour Glow', date: '', note: 'Even the sun wants to highlight you' }
         ];
 
         // HER VIDEOS - Use local paths like "videos/video1.mp4"
