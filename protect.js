@@ -1,6 +1,6 @@
 // Password protection
 (function() {
-    const correctPassword = "NdutaSteph";
+    const correctPassword = "Scrapbook101";
     const savedPassword = sessionStorage.getItem('scrapbook_access');
     
     if (savedPassword !== correctPassword) {
